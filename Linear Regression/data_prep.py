@@ -30,8 +30,6 @@ def load_simple_data():
     y = y.unsqueeze(1)
 
     return x, y
-    #raise NotImplementedError("Complete load_simple_data()")
-
 
 def load_multiple_data():
     """
@@ -61,7 +59,6 @@ def load_multiple_data():
     y = y.unsqueeze(1)
 
     return X, y
-    #raise NotImplementedError("Complete load_multiple_data()")
 
 
 def preview_data():

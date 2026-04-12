@@ -3,8 +3,6 @@ import torch
 
 from data_prep import load_simple_data
 
-
-# TODO: choose your own training hyperparameters
 EPOCHS = 1000
 LEARNING_RATE = 0.00001
 
@@ -14,73 +12,61 @@ def forward(x, w, b):
     Simple linear model:
         y_hat = w * x + b
     """
-
-    # TODO: return the prediction formula
-    raise NotImplementedError("Complete forward()")
-
+    return w * x + b
 
 def train_model(x, y):
     """
     Train a 1D linear regression model on BMI -> charges.
     """
+    w = torch.randn(1, requires_grad=True)
+    b = torch.randn(1, requires_grad=True)
 
-    # TODO: initialize w and b as tensors
-    # TODO: set requires_grad=True for both
-    # w = ...
-    # b = ...
+    loss_fn = torch.nn.MSELoss()
 
-    # TODO: create the loss function
-    # loss_fn = torch.nn.MSELoss()
+    optimizer = torch.optim.SGD([w, b], lr=LEARNING_RATE)
 
-    # TODO: create the optimizer and pass [w, b]
-    # optimizer = torch.optim.SGD([...], lr=LEARNING_RATE)
+    loss_history = []
 
-    # TODO: create a list to store the loss values if you want
-    # loss_history = []
+    for epoch in range(EPOCHS):
+        predictions = w * x + b
+        loss = loss_fn(predictions, y)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        loss_history.append(loss.item())
 
-    # TODO: write the training loop
-    # for epoch in range(EPOCHS):
-    #     predictions = ...
-    #     loss = ...
-    #     loss.backward()
-    #     optimizer.step()
-    #     optimizer.zero_grad()
-    #     loss_history.append(loss.item())
-
-    raise NotImplementedError("Complete train_model()")
-
+    return w, b, loss_history
 
 def plot_results(x, y, w, b):
     """
     Plot the raw data and the final prediction line.
     """
+    plt.scatter(x=x.squeeze(), y=y.squeeze(), color="green", label="Data")
 
-    # TODO: make a scatter plot of x vs y
-    # plt.scatter(...)
+    y_hat = forward(x=x, w=w, b=b).detach()
+    sorted_idx = torch.argsort(x.squeeze())
+    x_sorted = x[sorted_idx].squeeze()
+    y_hat_sorted = y_hat[sorted_idx].squeeze()
 
-    # TODO: create model predictions for the line
-    # y_hat = ...
+    plt.plot(x_sorted, y_hat_sorted, label="Regression line")
 
-    # TODO: plot the line on top of the scatter plot
-    # plt.plot(...)
-
-    # TODO: add title, axis labels, legend
-    # TODO: call plt.show() or save the figure
-    raise NotImplementedError("Complete plot_results()")
-
+    plt.title("Simple Linear Regression")
+    plt.xlabel("BMI")
+    plt.ylabel("Charges")
+    plt.legend()
+    plt.show()
 
 def main():
-    # TODO: load x and y from data_prep.py
-    # x, y = load_simple_data()
+    x, y = load_simple_data()
 
-    # TODO: train the model
-    # w, b, loss_history = train_model(x, y)
+    w, b, loss_history = train_model(x, y)
 
-    # TODO: print the learned parameters and final loss
+    print(f"Learned parameter w: {w}")
+    print(f"Learned parameter b: {b}")
+    print(f"Learned final loss: {loss_history[-1]}")
 
-    # TODO: visualize the fitted line
-    # plot_results(x, y, w, b)
-    pass
+    plot_results(x, y, w, b)
+    
 
 
 if __name__ == "__main__":
